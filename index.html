@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星时钟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Special+Elite&family=Playfair+Display:wght@700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --transition-speed: 0.5s;
+  --tab-count: 5;
+}
+
+/* ─── BASE RESET ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   THEME 1: MECHANICAL STEAMPUNK
+   ============================================================ */
+[data-theme="mechanical"] {
+  --bg-primary: #1a1208;
+  --bg-secondary: #2a1f0e;
+  --bg-card: rgba(42,31,14,0.85);
+  --primary: #c9a227;
+  --primary-dim: #8a6f1a;
+  --accent: #d4956a;
+  --accent2: #a67b5b;
+  --text-primary: #e8d5a3;
+  --text-secondary: #b8a07a;
+  --text-dim: #7a6b4a;
+  --border: rgba(201,162,39,0.3);
+  --glow: rgba(201,162,39,0.4);
+  --font-display: 'Playfair Display', 'Times New Roman', serif;
+  --font-body: 'Special Elite', 'Georgia', serif;
+  --font-mono: 'Special Elite', monospace;
+  --radius: 4px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,162,39,0.2);
+  --btn-bg: linear-gradient(145deg, #3d2b14, #2a1f0e);
+  --btn-border: 1px solid rgba(201,162,39,0.5);
+  --input-bg: rgba(26,18,8,0.7);
+}
+
+/* ─── THEME 2: CARTOON ─── */
+[data-theme="cartoon"] {
+  --bg-primary: #fff0f5;
+  --bg-secondary: #ffe4ec;
+  --bg-card: rgba(255,255,255,0.92);
+  --primary: #ff6b9d;
+  --primary-dim: #ff4081;
+  --accent: #7ec8e3;
+  --accent2: #ffd93d;
+  --text-primary: #3d3d3d;
+  --text-secondary: #6b6b6b;
+  --text-dim: #a0a0a0;
+  --border: rgba(255,107,157,0.3);
+  --glow: rgba(255,107,157,0.3);
+  --font-display: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  --font-body: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  --font-mono: 'Comic Sans MS', cursive;
+  --radius: 24px;
+  --shadow: 0 6px 20px rgba(255,107,157,0.25);
+  --btn-bg: linear-gradient(145deg, #ff85b2, #ff6b9d);
+  --btn-border: 2px solid #fff;
+  --input-bg: rgba(255,240,245,0.8);
+}
+
+/* ─── THEME 3: CYBERPUNK ─── */
+[data-theme="cyberpunk"] {
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #111128;
+  --bg-card: rgba(17,17,40,0.88);
+  --primary: #00f0ff;
+  --primary-dim: #00b8cc;
+  --accent: #ff2d95;
+  --accent2: #b026ff;
+  --text-primary: #e0e0ff;
+  --text-secondary: #9090b0;
+  --text-dim: #505070;
+  --border: rgba(0,240,255,0.25);
+  --glow: rgba(0,240,255,0.5);
+  --font-display: 'Orbitron', 'Courier New', monospace;
+  --font-body: 'Rajdhani', 'Segoe UI', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --radius: 2px;
+  --shadow: 0 0 20px rgba(0,240,255,0.15), 0 4px 12px rgba(0,0,0,0.5);
+  --btn-bg: linear-gradient(145deg, rgba(0,240,255,0.1), rgba(176,38,255,0.1));
+  --btn-border: 1px solid rgba(0,240,255,0.5);
+  --input-bg: rgba(10,10,26,0.8);
+}
+
+/* ─── THEME 4: MINIMALIST ─── */
+[data-theme="minimal"] {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #eef0f2;
+  --bg-card: rgba(255,255,255,0.95);
+  --primary: #1a1a2e;
+  --primary-dim: #16213e;
+  --accent: #0f3460;
+  --accent2: #533483;
+  --text-primary: #1a1a2e;
+  --text-secondary: #5a5a6e;
+  --text-dim: #9a9aae;
+  --border: rgba(26,26,46,0.12);
+  --glow: rgba(26,26,46,0.08);
+  --font-display: 'Rajdhani', 'Helvetica Neue', sans-serif;
+  --font-body: 'Rajdhani', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --btn-bg: rgba(255,255,255,0.9);
+  --btn-border: 1px solid rgba(26,26,46,0.15);
+  --input-bg: rgba(238,240,242,0.7);
+}
+
+/* ─── THEME 5: RETRO PIXEL ─── */
+[data-theme="pixel"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: rgba(22,33,62,0.9);
+  --primary: #39ff14;
+  --primary-dim: #2bcc10;
+  --accent: #ffb800;
+  --accent2: #ff6f61;
+  --text-primary: #39ff14;
+  --text-secondary: #2bcc10;
+  --text-dim: #1a8a0a;
+  --border: rgba(57,255,20,0.3);
+  --glow: rgba(57,255,20,0.4);
+  --font-display: 'Press Start 2P', 'Courier New', monospace;
+  --font-body: 'Press Start 2P', 'Courier New', monospace;
+  --font-mono: 'Press Start 2P', monospace;
+  --radius: 0px;
+  --shadow: 4px 4px 0px rgba(0,0,0,0.6);
+  --btn-bg: #16213e;
+  --btn-border: 2px solid rgba(57,255,20,0.6);
+  --input-bg: rgba(10,10,20,0.8);
+}
+
+/* ============================================================
+   SMART HEADER (Auto-hide/show on top hover)
+   ============================================================ */
+.smart-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  transform: translateY(-100%);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.smart-header.visible { transform: translateY(0); }
+
+/* ─── Tab Navigation ─── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: clamp(11px, 2.5vw, 13px);
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+.tab-btn:hover, .tab-btn.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+.tab-btn.active {
+  font-weight: 700;
+}
+/* ─── Sidebar Toggle Logic ─── */
+
+/* 1. 开关按钮的特定样式 */
+.toggle-btn {
+  background: var(--bg-secondary); /* 与背景稍微区分 */
+  font-size: 12px;
+  z-index: 101;
+}
+
+/* 2. 桌面端收起状态 (垂直列表) */
+.theme-switcher {
+  transition: gap 0.3s ease, padding 0.3s ease, background 0.3s ease;
+}
+
+/* 默认状态下图标是向左的，收起后旋转180度向右 */
+.theme-switcher.collapsed .toggle-btn {
+  transform: rotate(180deg);
+  border-color: var(--primary); /* 收起时高亮开关，提示位置 */
+}
+
+/* 隐藏除 toggle-btn 以外的所有按钮 */
+.theme-switcher.collapsed .theme-btn:not(.toggle-btn) {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  border-width: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.theme-switcher.collapsed {
+  gap: 0; /* 收起间距 */
+  background: transparent; /* 收起时背景透明，只留按钮 */
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* 3. 移动端收起状态 (水平列表) */
+@media (max-width: 768px) {
+  /* 移动端图标默认向下，收起后旋转180度向上 */
+  .theme-switcher .toggle-btn {
+    transform: rotate(-90deg); /* 默认箭头向下 */
+  }
+  
+  .theme-switcher.collapsed .toggle-btn {
+    transform: rotate(90deg); /* 收起后箭头向上 */
+  }
+
+  /* 移动端水平收缩 */
+  .theme-switcher.collapsed .theme-btn:not(.toggle-btn) {
+    height: 34px; /* 保持高度 */
+    width: 0;     /* 宽度变0 */
+    opacity: 0;
+    margin: 0;
+    border-width: 0;
+    padding: 0;
+  }
+  
+  .theme-switcher.collapsed {
+    padding: 2px; /* 减小内边距 */
+  }
+}
+/* ─── Theme Switcher (left side icons) ─── */
+.theme-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: fixed;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+.theme-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow);
+  color: var(--text-secondary);
+}
+.theme-btn:hover { transform: scale(1.15); border-color: var(--primary); }
+.theme-btn.active { border-color: var(--primary); background: var(--primary); color: #fff; box-shadow: 0 0 12px var(--glow); }
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+#app {
+  width: 100%; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px 20px 20px 68px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Module panels (only .active is visible) ─── */
+.module {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 20px 20px 78px;
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.module.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* ─── Card Shell ─── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 4vw, 40px);
+  width: 100%;
+  max-width: 680px;
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ============================================================
+   CLOCK MODULE
+   ============================================================ */
+.clock-display {
+  text-align: center;
+  padding: 20px 0;
+}
+.clock-time {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 14vw, 120px);
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -2px;
+  line-height: 1.1;
+  text-shadow: 0 0 30px var(--glow);
+  transition: color 0.5s, text-shadow 0.5s;
+}
+.clock-date {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 3vw, 20px);
+  color: var(--text-secondary);
+  margin-top: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.clock-controls {
+  display: flex; justify-content: center; gap: 12px;
+  margin-top: 24px; flex-wrap: wrap;
+}
+
+/* ============================================================
+   ALARM MODULE
+   ============================================================ */
+.alarm-input-row {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.alarm-list { max-height: 260px; overflow-y: auto; }
+.alarm-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  background: var(--input-bg);
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideIn { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+.alarm-item.ringing { border-color: var(--accent); box-shadow: 0 0 16px var(--glow); animation: ringPulse 0.6s ease infinite alternate; }
+@keyframes ringPulse { from { transform: scale(1); } to { transform: scale(1.02); } }
+.alarm-time { font-family: var(--font-display); font-size: 22px; color: var(--primary); font-weight: 700; min-width: 80px; }
+.alarm-label { flex: 1; color: var(--text-secondary); font-size: 13px; }
+.alarm-toggle { position: relative; width: 44px; height: 24px; }
+.alarm-toggle input { opacity:0; width:0; height:0; }
+.alarm-toggle .slider {
+  position: absolute; inset: 0; background: var(--text-dim);
+  border-radius: 24px; cursor: pointer;
+  transition: 0.3s;
+}
+.alarm-toggle .slider::before {
+  content:''; position: absolute; height: 18px; width: 18px;
+  left: 3px; bottom: 3px; background: #fff;
+  border-radius: 50%; transition: 0.3s;
+}
+.alarm-toggle input:checked + .slider { background: var(--primary); }
+.alarm-toggle input:checked + .slider::before { transform: translateX(20px); }
+
+/* ============================================================
+   STOPWATCH MODULE
+   ============================================================ */
+.stopwatch-display {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 11vw, 88px);
+  font-weight: 900;
+  color: var(--primary);
+  text-shadow: 0 0 24px var(--glow);
+  letter-spacing: 2px;
+  padding: 16px 0;
+}
+.stopwatch-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.lap-list { max-height: 200px; overflow-y: auto; margin-top: 18px; }
+.lap-item {
+  display: flex; justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: background 0.2s;
+}
+.lap-item:hover { background: rgba(255,255,255,0.03); }
+.lap-item .lap-num { color: var(--primary); font-weight: 700; }
+
+/* ============================================================
+   WORLD CLOCK MODULE
+   ============================================================ */
+.world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.world-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.world-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.world-card .city { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+.world-card .world-time { font-family: var(--font-display); font-size: clamp(22px, 5vw, 32px); font-weight: 700; color: var(--primary); }
+.world-card .day-night { font-size: 28px; margin-bottom: 4px; }
+.world-card .tz-offset { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+/* ============================================================
+   POMODORO MODULE
+   ============================================================ */
+.pomodoro-ring-wrap {
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.pomodoro-svg { width: clamp(180px, 40vw, 260px); height: clamp(180px, 40vw, 260px); transform: rotate(-90deg); }
+.pomodoro-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+.pomodoro-progress { fill: none; stroke: var(--primary); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 0.5s linear, stroke 0.5s; }
+.pomodoro-time-display {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 900;
+  color: var(--primary);
+  text-shadow: 0 0 20px var(--glow);
+  text-align: center;
+}
+.pomodoro-label {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-top: 8px;
+}
+.pomodoro-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.pomodoro-settings { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+.pomodoro-settings label { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.pomodoro-settings input[type="number"] { width: 52px; }
+
+/* ============================================================
+   SHARED BUTTON & INPUT STYLES
+   ============================================================ */
+.btn {
+  background: var(--btn-bg);
+  border: var(--btn-border);
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-size: clamp(12px, 2.5vw, 14px);
+  padding: 9px 20px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+.btn:active { transform: translateY(0px) scale(0.97); }
+.btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn.primary:hover { filter: brightness(1.15); }
+.btn.danger { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.small { padding: 5px 12px; font-size: 11px; }
+
+.input-field {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  flex: 1;
+  min-width: 0;
+}
+.input-field:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--glow); }
+.input-field::placeholder { color: var(--text-dim); }
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ============================================================
+   BACKGROUND EFFECTS (theme-specific layers)
+   ============================================================ */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+/* Mechanical: gear silhouettes via pseudo-elements */
+[data-theme="mechanical"] .bg-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle 180px at 15% 30%, rgba(201,162,39,0.04) 0%, transparent 70%),
+    radial-gradient(circle 120px at 80% 70%, rgba(201,162,39,0.03) 0%, transparent 70%),
+    radial-gradient(circle 60px at 60% 20%, rgba(201,162,39,0.05) 0%, transparent 70%);
+}
+
+/* Cyberpunk: scanlines */
+[data-theme="cyberpunk"] .bg-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,240,255,0.015) 2px, rgba(0,240,255,0.015) 4px);
+}
+[data-theme="cyberpunk"] .bg-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,240,255,0.05) 0%, transparent 30%),
+    linear-gradient(180deg, transparent 70%, rgba(176,38,255,0.05) 100%);
+}
+
+/* Pixel: CRT scanlines + vignette */
+[data-theme="pixel"] .bg-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(57,255,20,0.03) 3px, rgba(57,255,20,0.03) 4px);
+}
+[data-theme="pixel"] .bg-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+}
+
+/* Minimal: subtle gradient */
+[data-theme="minimal"] .bg-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #eef0f2 50%, #f0f2f5 100%);
+  opacity: 0.5;
+}
+
+/* Cartoon: soft blobs */
+[data-theme="cartoon"] .bg-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle 300px at 20% 80%, rgba(126,200,227,0.12) 0%, transparent 70%),
+    radial-gradient(circle 200px at 75% 15%, rgba(255,217,61,0.15) 0%, transparent 70%),
+    radial-gradient(circle 250px at 85% 60%, rgba(255,107,157,0.1) 0%, transparent 70%);
+}
+
+/* ============================================================
+   CANVAS for Cyberpunk rain / Pixel particles
+   ============================================================ */
+#bgCanvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+[data-theme="cyberpunk"] #bgCanvas,
+[data-theme="pixel"] #bgCanvas { opacity: 1; }
+[data-theme="mechanical"] #bgCanvas { opacity: 0.35; }
+
+/* ============================================================
+   THEME-SPECIFIC MICRO-INTERACTIONS
+   ============================================================ */
+/* Mechanical: metal press */
+[data-theme="mechanical"] .btn:active {
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,162,39,0.3);
+  animation: metalPress 0.15s ease;
+}
+@keyframes metalPress { 0%{transform:translateY(0) scale(1)} 50%{transform:translateY(2px) scale(0.98)} 100%{transform:translateY(0) scale(1)} }
+
+/* Cartoon: jelly bounce */
+[data-theme="cartoon"] .btn:hover { animation: jellyBounce 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes jellyBounce {
+  0%   { transform: scale(1) translateY(-2px); }
+  30%  { transform: scale(1.08,0.95) translateY(-2px); }
+  60%  { transform: scale(0.95,1.05) translateY(-2px); }
+  100% { transform: scale(1) translateY(-2px); }
+}
+[data-theme="cartoon"] .btn:active { animation: jellyPress 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes jellyPress {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.9, 1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Cyberpunk: neon flicker on hover */
+[data-theme="cyberpunk"] .btn:hover {
+  box-shadow: 0 0 12px var(--glow), 0 0 30px rgba(0,240,255,0.15), inset 0 0 8px rgba(0,240,255,0.1);
+  animation: neonFlicker 0.3s ease;
+}
+@keyframes neonFlicker {
+  0%,100% { opacity:1; } 25% { opacity:0.85; } 75% { opacity:0.92; }
+}
+[data-theme="cyberpunk"] .btn:active { animation: glitchClick 0.2s steps(2); }
+@keyframes glitchClick {
+  0%   { transform: translate(0); filter: hue-rotate(0deg); }
+  25%  { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+  50%  { transform: translate(3px, -1px); filter: hue-rotate(180deg); }
+  75%  { transform: translate(-1px, -2px); filter: hue-rotate(270deg); }
+  100% { transform: translate(0); filter: hue-rotate(0deg); }
+}
+
+/* Minimal: glass morph on hover */
+[data-theme="minimal"] .btn:hover {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  border-color: rgba(26,26,46,0.25);
+}
+
+/* Pixel: no transition, instant */
+[data-theme="pixel"] .btn { transition: none !important; }
+[data-theme="pixel"] .btn:hover { background: var(--primary); color: var(--bg-primary); box-shadow: 2px 2px 0 #000; }
+[data-theme="pixel"] .btn:active { transform: translate(2px,2px); box-shadow: 0px 0px 0 #000; }
+
+/* ============================================================
+   MECHANICAL GEARS (decorative, CSS animated)
+   ============================================================ */
+.gear {
+  position: fixed; pointer-events: none; z-index: 0;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+[data-theme="mechanical"] .gear { opacity: 0.07; }
+.gear svg { display: block; }
+.gear-1 { top: -60px; right: -40px; width: 220px; height: 220px; }
+.gear-1 svg { animation: spinGear 18s linear infinite; }
+.gear-2 { bottom: -50px; left: -30px; width: 180px; height: 180px; }
+.gear-2 svg { animation: spinGear 22s linear infinite reverse; }
+.gear-3 { top: 40%; right: -70px; width: 140px; height: 140px; }
+.gear-3 svg { animation: spinGear 14s linear infinite; }
+@keyframes spinGear { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   CYBERPUNK GLITCH TEXT (for clock display)
+   ============================================================ */
+[data-theme="cyberpunk"] .clock-time {
+  position: relative;
+}
+[data-theme="cyberpunk"] .clock-time::before,
+[data-theme="cyberpunk"] .clock-time::after {
+  content: attr(data-text);
+  position: absolute; inset: 0;
+  opacity: 0;
+}
+[data-theme="cyberpunk"] .clock-time::before {
+  color: var(--accent); /* pink */
+  animation: glitchTop 3s infinite linear alternate-reverse;
+  clip-path: inset(0 0 60% 0);
+}
+[data-theme="cyberpunk"] .clock-time::after {
+  color: var(--accent2); /* purple */
+  animation: glitchBot 2.5s infinite linear alternate;
+  clip-path: inset(50% 0 0 0);
+}
+@keyframes glitchTop {
+  0%,92%,94%,96%,100% { transform: translate(0); opacity: 0; }
+  93% { transform: translate(-4px, 2px); opacity: 0.7; }
+  95% { transform: translate(3px, -1px); opacity: 0.6; }
+}
+@keyframes glitchBot {
+  0%,88%,90%,92%,100% { transform: translate(0); opacity: 0; }
+  89% { transform: translate(5px, -2px); opacity: 0.6; }
+  91% { transform: translate(-3px, 1px); opacity: 0.5; }
+}
+
+/* ============================================================
+   PIXEL CRT FLICKER OVERLAY
+   ============================================================ */
+.crt-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+  background: linear-gradient(180deg,
+    rgba(57,255,20,0.015) 0%,
+    transparent 50%,
+    rgba(57,255,20,0.015) 100%);
+  animation: crtFlicker 0.15s infinite;
+}
+[data-theme="pixel"] .crt-overlay { opacity: 1; }
+@keyframes crtFlicker { 0%,100% { opacity:1; } 50% { opacity:0.97; } }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .theme-switcher {
+    flex-direction: row;
+    top: auto; bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px;
+    box-shadow: var(--shadow);
+  }
+  .theme-btn { width: 34px; height: 34px; font-size: 16px; }
+  .module { padding: 50px 16px 24px 16px; }
+  .card { padding: 20px 16px; }
+  .world-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .alarm-input-row { flex-direction: column; }
+  .smart-header { padding: 8px 10px; }
+  .tabs { gap: 2px; }
+  .tab-btn { padding: 6px 8px; font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .clock-time { font-size: clamp(42px, 16vw, 60px); }
+  .world-grid { grid-template-columns: 1fr 1fr; }
+  .pomodoro-svg { width: 160px; height: 160px; }
+}
+
+/* ─── Focus mode (minimal theme) ─── */
+.focus-mode .smart-header,
+.focus-mode .theme-switcher,
+.focus-mode .card .clock-controls,
+.focus-mode .card .clock-date { display: none !important; }
+.focus-mode .module { padding: 0; }
+.focus-mode .card { background: transparent; border: none; box-shadow: none; text-align: center; }
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.text-center { text-align: center; }
+</style>
+</head>
+<body data-theme="mechanical">
+
+<!-- Background Canvas (Cyberpunk rain / Pixel particles / Mechanical steam) -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Background gradient/pattern layer -->
+<div class="bg-layer"></div>
+
+<!-- Decorative Gears (Mechanical theme) -->
+<div class="gear gear-1"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,2 56,14 70,8 66,22 80,20 72,32 86,36 74,42 84,52 70,52 76,66 62,60 64,76 52,66 50,82 48,66 36,76 38,60 24,66 30,52 16,52 26,42 14,36 28,32 20,20 34,22 30,8 44,14" fill="#c9a227"/><circle cx="50" cy="42" r="12" fill="#1a1208"/></svg></div>
+<div class="gear gear-2"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 55,15 67,10 64,23 76,22 70,33 82,36 72,42 80,52 68,51 72,64 60,58 60,72 50,62 40,72 40,58 28,64 32,51 20,52 28,42 18,36 30,33 24,22 36,23 33,10 45,15" fill="#c9a227"/><circle cx="50" cy="40" r="10" fill="#1a1208"/></svg></div>
+<div class="gear gear-3"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,8 54,18 65,14 62,26 73,26 68,36 78,40 70,48 76,58 64,55 66,68 56,62 54,74 46,62 36,68 38,55 26,58 32,48 24,40 34,36 29,26 40,26 37,14 48,18" fill="#c9a227"/><circle cx="50" cy="42" r="9" fill="#1a1208"/></svg></div>
+
+<!-- CRT overlay for pixel theme -->
+<div class="crt-overlay"></div>
+
+<!-- Mobile header trigger strip (invisible, top 40px) -->
+<div id="mobileHeaderTrigger" style="position:fixed;top:0;left:0;right:0;height:40px;z-index:999;pointer-events:auto;"></div>
+
+<!-- Smart Header -->
+<header class="smart-header" id="smartHeader">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="clock" role="tab">🕐 时钟</button>
+    <button class="tab-btn" data-tab="alarm" role="tab">⏰ 闹钟</button>
+    <button class="tab-btn" data-tab="stopwatch" role="tab">⏱️ 秒表</button>
+    <button class="tab-btn" data-tab="world" role="tab">🌍 世界</button>
+    <button class="tab-btn" data-tab="pomodoro" role="tab">🍅 番茄钟</button>
+  </nav>
+</header>
+
+<!-- Theme Switcher -->
+<aside class="theme-switcher" id="themeSidebar" role="group" aria-label="主题选择">
+  <button class="theme-btn toggle-btn" id="sidebarToggle" title="收起/展开">◀</button>
+  
+  <button class="theme-btn active" data-theme="mechanical" title="机械蒸汽朋克">⚙️</button>
+  <button class="theme-btn" data-theme="cartoon" title="活泼卡通">🎈</button>
+  <button class="theme-btn" data-theme="cyberpunk" title="赛博朋克">🤖</button>
+  <button class="theme-btn" data-theme="minimal" title="极简主义">◯</button>
+  <button class="theme-btn" data-theme="pixel" title="复古像素">👾</button>
+</aside>
+
+<!-- ═══════════ APP MODULES ═══════════ -->
+<main id="app">
+
+  <!-- ── CLOCK ── -->
+  <section class="module active" id="mod-clock">
+    <div class="card">
+      <div class="clock-display">
+        <div class="clock-time" id="clockTime" data-text="00:00:00">00:00:00</div>
+        <div class="clock-date" id="clockDate">Loading...</div>
+      </div>
+      <div class="clock-controls">
+        <button class="btn" id="btn12h">12小时制</button>
+        <button class="btn" id="btnFocus">专注模式</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ALARM ── -->
+  <section class="module" id="mod-alarm">
+    <div class="card">
+      <div class="alarm-input-row">
+        <input type="time" class="input-field" id="alarmTimeInput" style="max-width:160px;flex:none;">
+        <input type="text" class="input-field" id="alarmLabelInput" placeholder="闹钟备注（可选）">
+        <button class="btn primary" id="btnAddAlarm">+ 添加</button>
+      </div>
+      <div class="alarm-list" id="alarmList"></div>
+    </div>
+  </section>
+
+  <!-- ── STOPWATCH ── -->
+  <section class="module" id="mod-stopwatch">
+    <div class="card">
+      <div class="stopwatch-display" id="stopwatchDisplay">00:00.000</div>
+      <div class="stopwatch-controls">
+        <button class="btn primary" id="btnSwStart">开始</button>
+        <button class="btn" id="btnSwReset">重置</button>
+        <button class="btn" id="btnSwLap">计次</button>
+      </div>
+      <div class="lap-list" id="lapList"></div>
+    </div>
+  </section>
+
+  <!-- ── WORLD CLOCK ── -->
+  <section class="module" id="mod-world">
+    <div class="card">
+      <div class="world-grid" id="worldGrid"></div>
+    </div>
+  </section>
+
+  <!-- ── POMODORO ── -->
+  <section class="module" id="mod-pomodoro">
+    <div class="card">
+      <div class="pomodoro-ring-wrap" style="position:relative;">
+        <svg class="pomodoro-svg" id="pomodoroSvg" viewBox="0 0 200 200">
+          <circle class="pomodoro-bg" cx="100" cy="100" r="85"/>
+          <circle class="pomodoro-progress" id="pomodoroProgress" cx="100" cy="100" r="85"/>
+        </svg>
+        <div class="pomodoro-time-display" id="pomodoroTime" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">25:00</div>
+      </div>
+      <div class="pomodoro-label" id="pomodoroLabel">工作时间</div>
+      <div class="pomodoro-controls">
+        <button class="btn primary" id="btnPomStart">开始</button>
+        <button class="btn" id="btnPomReset">重置</button>
+      </div>
+      <div class="pomodoro-settings">
+        <label>工作 <input type="number" class="input-field" id="pomWorkMin" value="25" min="1" max="120" style="width:52px;flex:none;padding:5px 6px;"></label>
+        <label>休息 <input type="number" class="input-field" id="pomBreakMin" value="5" min="1" max="60" style="width:52px;flex:none;padding:5px 6px;"></label>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+
+(function() {
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+
+    });
+
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if(e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+I (检查元素)
+        if(e.ctrlKey && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+C (选择元素)
+        if(e.ctrlKey && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+U (查看源码)
+        if(e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. 无限 Debugger 循环 (这是个损招)
+    // 如果有人强行打开了 F12 控制台，这个代码会让浏览器卡在 debugger 断点，无法操作
+    setInterval(function() {
+        debugger;
+    }, 100);
+})();
+const Storage = {
+  get(key, fallback = null) {
+    try {
+      const v = localStorage.getItem(key);
+      return v !== null ? JSON.parse(v) : fallback;
+    } catch { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) { console.warn('Storage full', e); }
+  }
+};
+
+/* ============================================================
+   THEME ENGINE
+   Switches [data-theme] on body, persists choice
+   ============================================================ */
+const ThemeEngine = (() => {
+  let current = Storage.get('theme', 'mechanical');
+
+  function apply(theme) {
+    document.body.setAttribute('data-theme', theme);
+    current = theme;
+    Storage.set('theme', theme);
+    // Update theme buttons
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    // Restart canvas if needed
+    BgCanvas.restart();
+  }
+
+  function init() { apply(current); }
+  return { init, apply, get: () => current };
+})();
+
+/* ============================================================
+   SMART HEADER: auto-show on top-hover, auto-hide after 2s
+   ============================================================ */
+const SmartHeader = (() => {
+  const header = document.getElementById('smartHeader');
+  let hideTimer = null;
+
+  function show() {
+    header.classList.add('visible');
+    clearTimeout(hideTimer);
+  }
+  function scheduleHide() {
+    hideTimer = setTimeout(() => header.classList.remove('visible'), 2000);
+  }
+
+  document.addEventListener('mousemove', e => {
+    if (e.clientY < 22) { show(); clearTimeout(hideTimer); }
+    else if (header.classList.contains('visible')) { scheduleHide(); }
+  });
+  // Touch support: tap near top
+  document.addEventListener('touchstart', e => {
+    if (e.touches[0].clientY < 40) show();
+    else if (header.classList.contains('visible')) scheduleHide();
+  }, { passive: true });
+
+  // Always show on mobile initially for 3s
+  function mobileInit() {
+    if (window.innerWidth < 768) { show(); hideTimer = setTimeout(() => header.classList.remove('visible'), 3000); }
+  }
+
+  // Mobile trigger strip
+  document.getElementById('mobileHeaderTrigger').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    show();
+  }, { passive: false });
+  document.getElementById('mobileHeaderTrigger').addEventListener('click', () => { show(); });
+
+  return { show, scheduleHide, mobileInit };
+})();
+
+/* ============================================================
+   TAB ROUTER (event delegation)
+   ============================================================ */
+const Router = (() => {
+  let current = Storage.get('activeTab', 'clock');
+
+  function switchTo(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.module').forEach(m => m.classList.toggle('active', m.id === 'mod-' + tab));
+    current = tab;
+    Storage.set('activeTab', tab);
+    if (tab === 'world') {
+        WorldClock.start();
+        } else {
+        WorldClock.stop();
+        }
+  }
+
+  // Event delegation on header
+  document.getElementById('smartHeader').addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (btn) { switchTo(btn.dataset.tab); SmartHeader.scheduleHide(); }
+  });
+
+  function init() { switchTo(current); }
+  return { init, current: () => current };
+})();
+
+document.addEventListener('keydown', (e) => {
+  // 如果焦点在输入框内，不触发快捷键
+  if (e.target.tagName === 'INPUT') return;
+
+  const activeTab = Router.current();
+
+  if (e.code === 'Space') {
+    e.preventDefault(); // 防止页面滚动
+    if (activeTab === 'stopwatch') document.getElementById('btnSwStart').click();
+    if (activeTab === 'pomodoro') document.getElementById('btnPomStart').click();
+  }
+  
+  if (e.code === 'Escape') {
+    if (activeTab === 'stopwatch') document.getElementById('btnSwReset').click();
+    if (activeTab === 'pomodoro') document.getElementById('btnPomReset').click();
+  }
+});
+/* ============================================================
+   BACKGROUND CANVAS
+   Cyberpunk: digital rain | Pixel: falling particles | Mechanical: steam
+   ============================================================ */
+const BgCanvas = (() => {
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animId = null;
+    let isRunning = false; // 新增状态标记
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+  class RainDrop {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height - canvas.height;
+      this.speed = 4 + Math.random() * 8;
+      this.len = 12 + Math.random() * 24;
+      this.alpha = 0.3 + Math.random() * 0.5;
+      this.char = String.fromCharCode(0x30A0 + Math.random() * 96); // katakana-ish
+    }
+    update() {
+      this.y += this.speed;
+      if (this.y - this.len > canvas.height) this.reset();
+    }
+    draw() {
+      ctx.fillStyle = `rgba(0,240,255,${this.alpha * 0.6})`;
+      ctx.font = '12px "Share Tech Mono", monospace';
+      ctx.fillText(this.char, this.x, this.y);
+      // trail
+      ctx.fillStyle = `rgba(0,240,255,${this.alpha * 0.15})`;
+      ctx.fillRect(this.x + 2, this.y - this.len, 2, this.len);
+    }
+  }
+
+  class PixelParticle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = 2 + Math.random() * 3;
+      this.speedY = 0.3 + Math.random() * 1.2;
+      this.alpha = 0.2 + Math.random() * 0.5;
+      this.color = Math.random() > 0.7 ? '57,255,20' : '255,184,0';
+    }
+    update() {
+      this.y += this.speedY;
+      if (this.y > canvas.height) { this.y = 0; this.x = Math.random() * canvas.width; }
+    }
+    draw() {
+      ctx.fillStyle = `rgba(${this.color},${this.alpha})`;
+      ctx.fillRect(this.x, this.y, this.size, this.size);
+    }
+  }
+
+  class SteamParticle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = canvas.height + Math.random() * 100;
+      this.radius = 2 + Math.random() * 6;
+      this.speedY = -(0.3 + Math.random() * 0.8);
+      this.speedX = (Math.random() - 0.5) * 0.5;
+      this.alpha = 0;
+      this.life = 0;
+      this.maxLife = 60 + Math.random() * 80;
+    }
+    update() {
+      this.life++;
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.radius += 0.05;
+      this.alpha = this.life < this.maxLife * 0.3 ? this.life / (this.maxLife * 0.3) * 0.12 : (1 - (this.life - this.maxLife * 0.3) / (this.maxLife * 0.7)) * 0.12;
+      if (this.life >= this.maxLife) this.reset();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,162,39,${this.alpha})`;
+      ctx.fill();
+    }
+  }
+
+  function initParticles(m) {
+    mode = m;
+    particles = [];
+    if (m === 'rain') { for (let i = 0; i < 80; i++) particles.push(new RainDrop()); }
+    else if (m === 'pixel') { for (let i = 0; i < 60; i++) particles.push(new PixelParticle()); }
+    else if (m === 'steam') { for (let i = 0; i < 40; i++) particles.push(new SteamParticle()); }
+  }
+
+function loop() {
+    if (!isRunning) return; // 如果被标记暂停，直接停止循环
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    animId = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (isRunning) return;
+    isRunning = true;
+    loop();
+  }
+
+  function stop() {
+    isRunning = false;
+    cancelAnimationFrame(animId);
+  }
+
+  function restart() {
+    stop();
+    resize();
+    const theme = ThemeEngine.get();
+    // 只有这几个主题需要 Canvas
+    if (['cyberpunk', 'pixel', 'mechanical'].includes(theme)) {
+       if (theme === 'cyberpunk') initParticles('rain');
+       else if (theme === 'pixel') initParticles('pixel');
+       else if (theme === 'mechanical') initParticles('steam');
+       start();
+    } else {
+       // 其他主题彻底清除 Canvas 内容
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  
+  return { restart, stop, start };
+})();
+/* ============================================================
+   CLOCK MODULE
+   ============================================================ */
+const Clock = (() => {
+  let is24h = Storage.get('clock24h', true);
+
+  const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+    let displayH = h;
+    if (!is24h) { displayH = h % 12 || 12; }
+    const timeStr = `${pad(displayH)}:${pad(m)}:${pad(s)}`;
+    const el = document.getElementById('clockTime');
+    el.textContent = timeStr;
+    el.setAttribute('data-text', timeStr); // for cyberpunk glitch
+    document.getElementById('clockDate').textContent =
+      `${now.getFullYear()} — ${months[now.getMonth()]} ${now.getDate()} ${days[now.getDay()]}`;
+  }
+
+  document.getElementById('btn12h').addEventListener('click', function() {
+    is24h = !is24h;
+    Storage.set('clock24h', is24h);
+    this.textContent = is24h ? '12小时制' : '24小时制';
+  });
+
+  document.getElementById('btnFocus').addEventListener('click', function() {
+    document.body.classList.toggle('focus-mode');
+    this.textContent = document.body.classList.contains('focus-mode') ? '退出专注' : '专注模式';
+  });
+
+  setInterval(tick, 1000);
+  tick();
+  return {};
+})();
+
+const Alarm = (() => {
+  let alarms = Storage.get('alarms', []);
+  let audioCtx = null;
+  let ringInterval = null;
+
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  // Play a simple alarm tone
+  function playAlarmTone() {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.15);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+  }
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function render() {
+    const list = document.getElementById('alarmList');
+    list.innerHTML = '';
+    alarms.forEach((alarm, i) => {
+      const item = document.createElement('div');
+      item.className = 'alarm-item' + (alarm.ringing ? ' ringing' : '');
+      item.innerHTML = `
+        <span class="alarm-time">${alarm.time}</span>
+        <span class="alarm-label">${alarm.label || '闹钟'}</span>
+        <label class="alarm-toggle"><input type="checkbox" ${alarm.enabled ? 'checked' : ''} data-idx="${i}"><span class="slider"></span></label>
+        <button class="btn small danger" data-del="${i}">删除</button>`;
+      list.appendChild(item);
+    });
+  }
+
+  function checkAlarms() {
+    const now = new Date();
+    const cur = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    let changed = false;
+    alarms.forEach(alarm => {
+      if (alarm.enabled && alarm.time === cur && !alarm.ringing) {
+        alarm.ringing = true;
+        changed = true;
+        playAlarmTone();
+        // Ring every 3s
+        if (!ringInterval) {
+          ringInterval = setInterval(() => playAlarmTone(), 3000);
+        }
+      }
+    });
+    if (changed) { render(); Storage.set('alarms', alarms); }
+  }
+
+  // Stop ringing on click of ringing alarm
+  document.getElementById('alarmList').addEventListener('click', e => {
+    const item = e.target.closest('.alarm-item.ringing');
+    if (item) {
+      alarms.forEach(a => a.ringing = false);
+      clearInterval(ringInterval); ringInterval = null;
+      render(); Storage.set('alarms', alarms);
+      return;
+    }
+    // Toggle
+    const toggle = e.target.closest('[data-idx]');
+    if (toggle && toggle.tagName === 'INPUT') {
+      const idx = parseInt(toggle.dataset.idx);
+      alarms[idx].enabled = toggle.checked;
+      Storage.set('alarms', alarms);
+      return;
+    }
+    // Delete
+    const delBtn = e.target.closest('[data-del]');
+    if (delBtn) {
+      const idx = parseInt(delBtn.dataset.del);
+      alarms.splice(idx, 1);
+      render(); Storage.set('alarms', alarms);
+    }
+  });
+
+  document.getElementById('btnAddAlarm').addEventListener('click', () => {
+    const timeInput = document.getElementById('alarmTimeInput');
+    const labelInput = document.getElementById('alarmLabelInput');
+    if (!timeInput.value) return;
+    alarms.push({ time: timeInput.value, label: labelInput.value.trim(), enabled: true, ringing: false });
+    // Sort by time
+    alarms.sort((a, b) => a.time.localeCompare(b.time));
+    timeInput.value = ''; labelInput.value = '';
+    render(); Storage.set('alarms', alarms);
+  });
+
+  setInterval(checkAlarms, 1000);
+  render();
+  return { render };
+})();
+
+/* ============================================================
+   STOPWATCH MODULE
+   ============================================================ */
+const Stopwatch = (() => {
+  let _accum = 0;       // accumulated ms from previous start/pause cycles
+  let _startAt = 0;     // Date.now() when last started/resumed
+  let running = false;
+  let timer = null;
+  let laps = [];
+
+  function pad(n, d=2) { return String(n).padStart(d,'0'); }
+
+  function formatTime(ms) {
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    const mil = Math.floor((ms % 1000) / 10);
+    return `${pad(m)}:${pad(s)}.${pad(mil)}`;
+  }
+
+  function getElapsed() {
+    return running ? _accum + (Date.now() - _startAt) : _accum;
+  }
+
+  function tick() {
+    document.getElementById('stopwatchDisplay').textContent = formatTime(getElapsed());
+  }
+
+  document.getElementById('btnSwStart').addEventListener('click', function() {
+    if (running) {
+      // Pause
+      _accum = getElapsed();
+      running = false;
+      clearInterval(timer);
+      this.textContent = '继续';
+      tick(); // final frame
+    } else {
+      // Start / Resume
+      _startAt = Date.now();
+      running = true;
+      timer = setInterval(tick, 33);
+      this.textContent = '暂停';
+    }
+  });
+
+  document.getElementById('btnSwReset').addEventListener('click', () => {
+    running = false;
+    clearInterval(timer);
+    _accum = 0;
+    _startAt = 0;
+    laps = [];
+    document.getElementById('stopwatchDisplay').textContent = '00:00.000';
+    document.getElementById('btnSwStart').textContent = '开始';
+    renderLaps();
+  });
+
+  document.getElementById('btnSwLap').addEventListener('click', () => {
+    const current = getElapsed();
+    if (current > 0) {
+      laps.push(current);
+      renderLaps();
+    }
+  });
+
+  function renderLaps() {
+    const list = document.getElementById('lapList');
+    list.innerHTML = '';
+    // Show in reverse (newest first)
+    for (let i = laps.length - 1; i >= 0; i--) {
+      const lap = laps[i];
+      const prev = i > 0 ? laps[i-1] : 0;
+      const split = lap - prev;
+      const div = document.createElement('div');
+      div.className = 'lap-item';
+      div.innerHTML = `<span class="lap-num">第 ${i+1} 次</span><span style="color:var(--text-dim)">${formatTime(split)}</span><span style="color:var(--text-secondary)">${formatTime(lap)}</span>`;
+      list.appendChild(div);
+    }
+  }
+
+  return {};
+})();
+const WorldClock = (() => {
+  const cities = [
+    { name: '北京', tz: 'Asia/Shanghai', emoji: '🏯' },
+    { name: '纽约', tz: 'America/New_York', emoji: '🗽' },
+    { name: '伦敦', tz: 'Europe/London', emoji: '🎡' },
+    { name: '东京', tz: 'Asia/Tokyo', emoji: '⛩️' }
+  ];
+  let intervalId = null; // 用于存储定时器
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function getOffset(tz) {
+    const now = new Date();
+    const str = now.toLocaleString('en-US', { timeZone: tz });
+    const tzDate = new Date(str);
+    const diff = (tzDate - now) / 60000 + now.getTimezoneOffset();
+    const sign = diff >= 0 ? '+' : '-';
+    const absH = Math.floor(Math.abs(diff) / 60);
+    const absM = Math.abs(diff) % 60;
+    return `UTC${sign}${absH}${absM ? ':' + pad(absM) : ''}`;
+  }
+
+  function isDaytime(tz) {
+    const str = new Date().toLocaleString('en-US', { timeZone: tz });
+    const h = new Date(str).getHours();
+    return h >= 6 && h < 20;
+  }
+
+  function render() {
+    if (document.hidden) return;
+    const grid = document.getElementById('worldGrid');
+    grid.innerHTML = '';
+    cities.forEach(city => {
+      const str = new Date().toLocaleString('en-US', { timeZone: city.tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false });
+      const day = isDaytime(city.tz);
+      const card = document.createElement('div');
+      card.className = 'world-card';
+      card.innerHTML = `
+        <div class="day-night">${day ? '☀️' : '🌙'}</div>
+        <div class="city">${city.emoji} ${city.name}</div>
+        <div class="world-time">${str}</div>
+        <div class="tz-offset">${getOffset(city.tz)}</div>`;
+      grid.appendChild(card);
+      function start() {
+    render(); // 立即渲染一次
+    if (!intervalId) {
+      intervalId = setInterval(render, 1000);
+    }
+  }
+
+    function stop() {
+        if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        }
+    }
+
+    return { render, start, stop };
+    });
+  }
+
+  // Update every second when tab is active
+  setInterval(() => {
+    if (document.getElementById('mod-world').classList.contains('active')) render();
+  }, 1000);
+
+  return { render };
+})();
+
+const Pomodoro = (() => {
+  let workMin = Storage.get('pomWork', 25);
+  let breakMin = Storage.get('pomBreak', 5);
+  let totalSeconds = workMin * 60;
+  let remaining = totalSeconds;
+  let running = false;
+  let timer = null;
+  let isWork = true; // true = work phase
+
+  const circumference = 2 * Math.PI * 85; // r=85
+  document.getElementById('pomodoroProgress').style.strokeDasharray = circumference;
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function updateDisplay() {
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    document.getElementById('pomodoroTime').textContent = `${pad(m)}:${pad(s)}`;
+    // Progress ring
+    const pct = remaining / totalSeconds;
+    const offset = circumference * (1 - pct);
+    document.getElementById('pomodoroProgress').style.strokeDashoffset = offset;
+    // Color shift: work=primary, break=accent
+    document.getElementById('pomodoroProgress').style.stroke = isWork ? 'var(--primary)' : 'var(--accent)';
+    document.getElementById('pomodoroLabel').textContent = isWork ? '🍅 工作时间' : '☕ 休息时间';
+  }
+
+  function tick() {
+    remaining--;
+    if (remaining <= 0) {
+      remaining = 0;
+      updateDisplay();
+      clearInterval(timer); running = false;
+      document.getElementById('btnPomStart').textContent = '开始';
+      // Phase complete: play tone and switch
+      playCompleteTone();
+      setTimeout(() => {
+        isWork = !isWork;
+        totalSeconds = (isWork ? workMin : breakMin) * 60;
+        remaining = totalSeconds;
+        updateDisplay();
+      }, 2000);
+      return;
+    }
+    updateDisplay();
+  }
+window.addEventListener('click', () => {
+
+}, { once: true });
+  function playCompleteTone() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      const notes = [523, 659, 784]; // C5 E5 G5
+      notes.forEach((f, i) => {
+        osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.2);
+      });
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.8);
+    } catch(e) {}
+  }
+if (document.hidden && Notification.permission === 'granted') {
+  new Notification("🍅 番茄钟结束", {
+    body: isWork ? "休息一下吧！" : "该开始工作了！",
+    icon: "https://emojicdn.elk.sh/🍅" // 可以换成你的图标
+  });
+}
+  document.getElementById('btnPomStart').addEventListener('click', function() {
+    if (running) {
+      clearInterval(timer); running = false;
+      this.textContent = '继续';
+    } else {
+      if (remaining === 0) {
+        // Reset
+        isWork = true;
+        totalSeconds = workMin * 60;
+        remaining = totalSeconds;
+        updateDisplay();
+      }
+      running = true;
+      timer = setInterval(tick, 1000);
+      this.textContent = '暂停';
+    }
+  });
+
+  document.getElementById('btnPomReset').addEventListener('click', () => {
+    clearInterval(timer); running = false;
+    isWork = true;
+    totalSeconds = workMin * 60;
+    remaining = totalSeconds;
+    document.getElementById('btnPomStart').textContent = '开始';
+    updateDisplay();
+  });
+
+  // Settings change
+  document.getElementById('pomWorkMin').addEventListener('change', function() {
+    workMin = Math.max(1, Math.min(120, parseInt(this.value) || 25));
+    Storage.set('pomWork', workMin);
+    if (!running && isWork) { totalSeconds = workMin*60; remaining = totalSeconds; updateDisplay(); }
+  });
+  document.getElementById('pomBreakMin').addEventListener('change', function() {
+    breakMin = Math.max(1, Math.min(60, parseInt(this.value) || 5));
+    Storage.set('pomBreak', breakMin);
+    if (!running && !isWork) { totalSeconds = breakMin*60; remaining = totalSeconds; updateDisplay(); }
+  });
+
+  // Init values from storage
+  document.getElementById('pomWorkMin').value = workMin;
+  document.getElementById('pomBreakMin').value = breakMin;
+  updateDisplay();
+
+  return {};
+})();
+
+/* ============================================================
+   THEME SWITCHER (event delegation)
+   ============================================================ */
+document.querySelector('.theme-switcher').addEventListener('click', e => {
+  const btn = e.target.closest('.theme-btn');
+  if (btn && btn.dataset.theme) {
+    ThemeEngine.apply(btn.dataset.theme);
+  }
+});
+/* ============================================================
+   SIDEBAR TOGGLE
+   ============================================================ */
+(function() {
+  const toggleBtn = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('themeSidebar');
+  
+  toggleBtn.addEventListener('click', (e) => {
+    // 阻止事件冒泡，防止触发 theme-switcher 的委托事件
+    e.stopPropagation(); 
+    sidebar.classList.toggle('collapsed');
+  });
+
+  // (可选) 如果你想在移动端点击某个主题后自动收起侧边栏，可以在 ThemeEngine 中添加逻辑
+})();
+/* ============================================================
+   PERFORMANCE OPTIMIZER (性能优化控制器)
+   ============================================================ */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // 1. 停止高耗能的 Canvas 动画
+    BgCanvas.stop();
+    // 2. 停止网页标题更新（可选，如果你有改标题逻辑）
+    console.log('页面隐藏：暂停渲染以节省计算资源');
+  } else {
+    // 恢复渲染
+    BgCanvas.start();
+    // 强制刷新一次当前模块的显示，防止显示滞后
+    if (Router.current() === 'world') WorldClock.render();
+  }
+});
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // 页面隐藏时：停止 Canvas 动画，减少不必要的计算
+    // (BgCanvas 需要暴露一个 pause 方法，或者简单的设置一个全局 flag)
+    document.title = " 欢迎回来...";
+  } else {
+    // 页面恢复时
+    BgCanvas.restart(); // 重新激活 Canvas
+    document.title = "星时钟";
+  }
+});
+(function init() {
+  ThemeEngine.init();
+  Router.init();
+  BgCanvas.restart();
+  SmartHeader.mobileInit();
+  // Show header briefly on load
+  setTimeout(() => SmartHeader.show(), 200);
+  setTimeout(() => SmartHeader.scheduleHide(), 2200);
+})();
+</script>
+</body>
+</html>
